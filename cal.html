@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculator</title>
+
+    <style>
+        body {
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial;
+        }
+
+        .calculator {
+            background-color: #bdbdbd;
+            width: 450px;
+            padding: 25px;
+            border: 2px solid gray;
+            border-radius: 20px;
+        }
+
+        .display {
+            background-color: #eee;
+            height: 120px;
+            padding: 15px;
+            margin-bottom: 25px;
+            border: 2px solid gray;
+            border-radius: 8px;
+            text-align: right;
+            overflow: hidden;
+        }
+
+        #expression {
+            font-size: 22px;
+            margin-top: 5px;
+        }
+
+        #result {
+            font-size: 45px;
+            margin-top: 15px;
+        }
+
+        .top-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .top-buttons button {
+            width: 50%;
+            height: 80px;
+            font-size: 22px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            height: 75px;
+            font-size: 22px;
+            border: 2px solid gray;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ccc;
+        }
+
+        .clear {
+            background-color: #ffaaaa;
+        }
+
+        .delete {
+            background-color: #aaaaff;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="calculator">
+
+    <div class="display">
+        <div id="expression"></div>
+        <div id="result">0</div>
+    </div>
+
+    <div class="top-buttons">
+        <button class="clear" onclick="clearDisplay()">CLEAR</button>
+        <button class="delete" onclick="deleteLast()">DELETE</button>
+    </div>
+
+    <div class="buttons">
+
+        <button onclick="press('7')">7</button>
+        <button onclick="press('8')">8</button>
+        <button onclick="press('9')">9</button>
+        <button onclick="press('/')">÷</button>
+
+        <button onclick="press('4')">4</button>
+        <button onclick="press('5')">5</button>
+        <button onclick="press('6')">6</button>
+        <button onclick="press('*')">×</button>
+
+        <button onclick="press('1')">1</button>
+        <button onclick="press('2')">2</button>
+        <button onclick="press('3')">3</button>
+        <button onclick="press('-')">−</button>
+
+        <button onclick="press('.')">.</button>
+        <button onclick="press('0')">0</button>
+        <button onclick="calculate()">=</button>
+        <button onclick="press('+')">+</button>
+    </div>
+</div>
+
+<script>
+    let expression = "";
+
+    function press(value) {
+
+        expression += value;
+
+        document.getElementById("expression").innerText =
+            expression.replace(/\*/g, "×").replace(/\//g, "÷");
+
+        document.getElementById("result").innerText = expression;
+    }
+
+    function calculate() {
+
+        try {
+
+            if (expression === "") return;
+
+            if (!/^[0-9+\-*/. ]+$/.test(expression)) {
+                throw new Error("Invalid");
+            }
+
+            let answer = Function(
+                '"use strict"; return (' + expression + ')'
+            )();
+
+            if (!Number.isFinite(answer)) {
+                throw new Error("Invalid");
+            }
+
+            document.getElementById("expression").innerText =
+                expression.replace(/\*/g, "×").replace(/\//g, "÷") + " =";
+
+            document.getElementById("result").innerText = answer;
+
+            expression = String(answer);
+
+        }
+        catch {
+            document.getElementById("result").innerText = "Error";
+            expression = "";
+        }
+    }
+
+    function clearDisplay() {
+
+        expression = "";
+
+        document.getElementById("expression").innerText = "";
+        document.getElementById("result").innerText = "0";
+    }
+
+    function deleteLast() {
+
+        expression = expression.slice(0, -1);
+
+        document.getElementById("expression").innerText =
+            expression.replace(/\*/g, "×").replace(/\//g, "÷");
+
+        document.getElementById("result").innerText =
+            expression || "0";
+    }
+
+</script>
+
+</body>
+</html>
